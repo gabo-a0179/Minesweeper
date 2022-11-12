@@ -12,13 +12,7 @@ class Minesweeper():
 
         # Inicializacion de la pantalla
         self.config_pantalla()
-        
-        # Loop de prueba para mostrar la pantalla
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
+        self.eventos_teclado()
 
     def config_pantalla(self):
         # Definicion de la pantalla 
@@ -32,7 +26,41 @@ class Minesweeper():
         
         # Caption de la pantalla
         pygame.display.set_caption('Minesweeper')
-
+        
+    def eventos_teclado(self):
+        running = True
+        while running:
+            for evento in pygame.event.get():
+            
+                running = self.logica_eventos(evento)
+                
+    
+    def logica_eventos(self, evento):
+        if evento.type == pygame.QUIT:
+                    return False
+                    
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_LEFT:
+                print('Boton izquierdo')
+            if evento.key == pygame.K_RIGHT:
+                print('Boton derecho')
+            print('Algun boton se presiono')
+        if evento.type == pygame.KEYUP:
+            if evento.key == pygame.K_LEFT or evento.key == pygame.K_RIGHT:
+                print('Boton soltado')
+        
+        # Esta parte del mouse no es necesario dentro del for porque
+        # no depende de la variable 'evento'
+        izquierda, centro, derecha = pygame.mouse.get_pressed()
+        
+        if izquierda:
+            print('Mouse izquierda')
+        if centro:
+            print('Mouse centro')
+        if derecha:
+            print('Mouse derecha')        
+        
+        return True
 
 def main():
     pygame.init()
