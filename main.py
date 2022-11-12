@@ -30,6 +30,10 @@ class Minesweeper():
     def eventos_teclado(self):
         running = True
         while running:
+            posicion_mouse = pygame.mouse.get_pos()
+            print(posicion_mouse)
+            #circulo que marca donde está el mouse
+            pygame.draw.circle(self.screen,'blue',posicion_mouse,10) #por alguna razón no imprime el cŕiculo
             for evento in pygame.event.get():
             
                 running = self.logica_eventos(evento)
@@ -52,6 +56,8 @@ class Minesweeper():
         # Esta parte del mouse no es necesario dentro del for porque
         # no depende de la variable 'evento'
         izquierda, centro, derecha = pygame.mouse.get_pressed()
+
+    
         
         if izquierda:
             print('Mouse izquierda')
