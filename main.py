@@ -398,6 +398,9 @@ class Minesweeper():
         condicion_final = self.pantalla.gane_o_perdida
             
         print(condicion_final)
+        if condicion_final == 'Gane':
+            archivo, records_lista = guardar_records()
+            archivo.write(str(contador)+'\n') # Se guarda el record actual
 
 
     def logica_eventos(self, evento):
@@ -467,7 +470,7 @@ class GUI:
 
         elif id == "button_4":
             print("Ver Records")
-
+            archivo, lista_records_ordenados = guardar_records()
         else:
             self.dificultad = id
 
@@ -491,6 +494,19 @@ def cargar_partida():
     partida = cargar_datos.read().splitlines()
     
     return partida
+    
+    
+def guardar_records():
+    try:
+        cargar_datos = open('records.txt', 'r+')
+    
+    except FileNotFoundError:
+        return 0, 0
+    datos = cargar_datos.read().splitlines()
+    records = [float(record) for record in datos]
+    records_ord = sorted(records)
+
+    return cargar_datos, records_ord
 
 def main():
 
