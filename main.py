@@ -322,7 +322,7 @@ class Minesweeper():
             self.config_pantalla_guardada()
         else:
             self.config_pantalla()
-        self.eventos_teclado()
+        self.eventos()
 
     def config_pantalla_guardada(self):
         #####################################################
@@ -361,7 +361,7 @@ class Minesweeper():
         pygame.display.update()
         
 
-    def eventos_teclado(self):
+    def eventos(self):
         '''
         Funcion encargada de tomar accion ante eventos en el
         teclado y mouse
@@ -372,12 +372,14 @@ class Minesweeper():
         t_inicial = pygame.time.get_ticks()
         rectangle = pygame.Rect(0, 0, 200, 50)
         color=(205,205,205)
+        # Se obtienen archivos de sonido
+        #sonido_gane = pygame.mixer.Sound('fireworks.mp3') 
+        #sonido_per = pygame.mixer.Sound('blast.mp3')
 
         while running:
             self.screen.fill(color, rectangle)
             contador = ((pygame.time.get_ticks() - t_inicial)%60000)/1000
             contador = round(float(self.tiempo) + contador, 3)
-            print(contador)
             tiempo = self.fuente.render("Tiempo: {}".format(str(contador)), True, "BLACK")
             self.screen.blit(tiempo, (10, 20))
             pygame.display.update()
@@ -393,19 +395,40 @@ class Minesweeper():
                     if evento.key == pygame.K_ESCAPE: # Con esta condición se logra que se cierre el juego presionando ESCAPE
                         guardar_partida(self.dificultad, contador, self.pantalla.base, self.pantalla.estado_Flag, self.pantalla.partida_a_guardar)
                         running = False
-                        
-        
+
+        running2 = True
         condicion_final = self.pantalla.gane_o_perdida
             
         print(condicion_final)
         if condicion_final == 'Gane':
             archivo, records_lista = guardar_records()
             archivo.write(str(contador)+'\n') # Se guarda el record actual
+            
+        while running2:
+            for evento in pygame.event.get():
+                running2 = self.logica_eventos(evento)
+                if running2 == False: # Se aniade esta condicion debido al for
+                    break
+                elif condicion_final == "Gane":
+                    self.fuente = pygame.font.Font('freesansbold.ttf', 50)
+                    gana = self.fuente.render('Ha ganado', True, "BLACK")
+                    self.screen.blit(gana, (65, 300))
+                    #pygame.mixer.Sound.play(sonido_gane)
+                    pygame.display.update()
+                    #running2 = False
+
+                elif condicion_final == "Perdida":
+                    self.fuente = pygame.font.Font('freesansbold.ttf', 50)
+                    gana = self.fuente.render('Ha perdido', True, "BLACK")
+                    self.screen.blit(gana, (65, 300))
+                    #pygame.mixer.Sound.play(sonido_gane)
+                    pygame.display.update()
+                    #running2 = False
 
 
     def logica_eventos(self, evento):
         '''
-        Logica utilizada en la funcion eventos_teclado
+        Logica utilizada en la funcion eventos
         '''
         
         
@@ -469,6 +492,12 @@ class GUI:
             Gtk.main_quit()
 
         elif id == "button_4":
+            f = open("records.txt","r") # aqui se pone archivo de records falta excepción
+            lines = f.readlines()
+            self.fuente = pygame.font.Font('freesansbold.ttf', 50)
+            gana = self.fuente.render('{}'.format(lines[0]), True, "BLACK")
+            self.screen.blit(gana, (100, 100))
+            pygame.display.update()
             print("Ver Records")
             archivo, lista_records_ordenados = guardar_records()
         else:
@@ -518,6 +547,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
-    
-
