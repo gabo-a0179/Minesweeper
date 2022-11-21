@@ -492,14 +492,26 @@ class GUI:
             Gtk.main_quit()
 
         elif id == "button_4":
-            f = open("records.txt","r") # aqui se pone archivo de records falta excepción
-            lines = f.readlines()
-            self.fuente = pygame.font.Font('freesansbold.ttf', 50)
-            gana = self.fuente.render('{}'.format(lines[0]), True, "BLACK")
-            self.screen.blit(gana, (100, 100))
-            pygame.display.update()
-            print("Ver Records")
-            archivo, lista_records_ordenados = guardar_records()
+            pygame.init()
+            running = True
+            color = (205, 205, 205)  # Gris claro
+            archivo, lista = guardar_records()
+            while running:
+                for evento in pygame.event.get():
+                    if evento.type == pygame.QUIT:
+                        running = False
+                        pygame.quit()
+                        exit()
+                    if running == False: # Se aniade esta condicion debido al for
+                            break
+                    screen = pygame.display.set_mode((500,500))
+                    screen.fill(color)
+                    fuente = pygame.font.Font('freesansbold.ttf', 50)
+                    gana = fuente.render('Mejor tiempo {}'.format(lista[0]), True, "BLACK")
+                    screen.blit(gana, (50, 100))
+                    pygame.display.update()
+
+            
         else:
             self.dificultad = id
 
