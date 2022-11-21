@@ -372,6 +372,9 @@ class Minesweeper():
         t_inicial = pygame.time.get_ticks()
         rectangle = pygame.Rect(0, 0, 200, 50)
         color=(205,205,205)
+        # Se obtienen archivos de sonido
+        sonido_gane = pygame.mixer.Sound('fireworks.mp3') 
+        sonido_per = pygame.mixer.Sound('blast.mp3')
 
         while running:
             self.screen.fill(color, rectangle)
@@ -466,6 +469,12 @@ class GUI:
             Gtk.main_quit()
 
         elif id == "button_4":
+            f = open("records.txt","r") # aqui se pone archivo de records falta excepción
+            lines = f.readlines()
+            self.fuente = pygame.font.Font('freesansbold.ttf', 50)
+            gana = self.fuente.render('{}'.format(lines[0]), True, "BLACK")
+            self.screen.blit(gana, (100, 100))
+            pygame.display.update()
             print("Ver Records")
 
         else:
@@ -502,6 +511,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
-    
-#prueba
