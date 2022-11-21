@@ -365,8 +365,7 @@ class Minesweeper():
         timer = pygame.time.Clock()
         t_inicial = pygame.time.get_ticks()
         rectangle = pygame.Rect(0, 0, 200, 50)
-        color=(205,205,205)
-        running = True
+        color = (205,205,205)
         while running:
             # Se crea un rectángulo que se llene cada vez tick del reloj
             self.screen.fill(color,rectangle)
