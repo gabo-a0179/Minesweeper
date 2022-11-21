@@ -346,6 +346,11 @@ class Minesweeper():
 
         # Caption de la pantalla
         pygame.display.set_caption('Minesweeper')
+
+        # Configuranción de los mensajes
+        fuente = pygame.font.Font('freesansbold.ttf', 16)
+        boton_salida = fuente.render('ESC: Para volver al menú', True, "BLACK")
+        self.screen.blit(boton_salida, (10, 50))
         
         self.pantalla.matriz_base(self.screen)
 
@@ -360,6 +365,9 @@ class Minesweeper():
                 running = self.logica_eventos(evento)
                 if running == False: # Se aniade esta condicion debido al for
                     break
+                elif evento.type == pygame.KEYDOWN:
+                    if evento.key == pygame.K_ESCAPE: # Con esta condición se logra que se cierre el juego presionando ESCAPE
+                        running = False
 
     def logica_eventos(self, evento):
         '''
