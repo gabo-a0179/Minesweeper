@@ -106,50 +106,37 @@ class Pantalla_jugando():
 
         # Se colocan los numeros respectivos a cada casilla que
         # no es una mina
-        if fila != 0 and columna != 0:
-            if self.base[fila-1][columna-1] == 'Mina':
-                cantidad_de_minas += 1
 
-        if fila != 0:
-            if self.base[fila-1][columna] == 'Mina':
-                cantidad_de_minas += 1
-
-        if fila != 0 and columna != (self.largo-1):
-            if self.base[fila-1][columna+1] == 'Mina':
-                cantidad_de_minas += 1
-
-        if columna != 0:
-            if self.base[fila][columna-1] == 'Mina':
-                cantidad_de_minas += 1
-
-        if columna != (self.largo-1):
-            if self.base[fila][columna+1] == 'Mina':
-                cantidad_de_minas += 1
-
-        if fila != (self.ancho-1) and columna != 0:
-            if self.base[fila+1][columna-1] == 'Mina':
-                cantidad_de_minas += 1
-
-        if fila != (self.ancho-1):
-            if self.base[fila+1][columna] == 'Mina':
-                cantidad_de_minas += 1
-
-        if fila != (self.ancho-1) and columna != (self.largo-1):
-            if self.base[fila+1][columna+1] == 'Mina':
-                cantidad_de_minas += 1
+        lista = [[fila-1,columna-1],
+                 [fila-1,columna],
+                 [fila-1,columna+1],
+                 [fila,columna-1],
+                 [fila,columna+1],
+                 [fila+1,columna-1],
+                 [fila+1,columna],
+                 [fila+1,columna+1]
+        ]
         
+        for fila_i, columna_j in lista:
+            if (fila_i >= 0 and columna_j >= 0 and
+               fila_i <= (self.ancho-1) and columna_j <= (self.largo-1)):
+                if self.base[fila_i][columna_j] == 'Mina':
+                    cantidad_de_minas += 1
+
         self.base[fila][columna] = cantidad_de_minas
-        
+     
     def click_izquierdo(self, fila, columna):
         '''
         Funcion que toma accion cuando se preciona el click izquierdo
         '''
+ 
         if self.estado_Flag[fila][columna] == 'Flag':
             return True
         
         cantidad_minas = self.base[fila][columna]
         if cantidad_minas == 'Mina':
             self.mina_precionada(fila, columna)
+            pygame.display.update()
             return False
             
         elif cantidad_minas == 0:
@@ -171,7 +158,7 @@ class Pantalla_jugando():
         '''
         Funcion que toma accion cuando se preciona el click derecho
         '''
-        if self.estado_Flag[fila][columna] == 'Sin casilla':
+        if self.estado_Flag[fila][columna] == 'Sin casilla': ####
             return 0
         if self.estado_Flag[fila][columna] == 'Flag':
             imagen_NConf = pygame.image.load('Imagenes/Grid.png')
@@ -193,117 +180,39 @@ class Pantalla_jugando():
         imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
         self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+columna*self.seccion))
         
-        return 0
         
     def casilla_cero(self, fila, columna):
-    
+
         imagen_NConf = pygame.image.load(self.numeros[0])
         imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
         self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+columna*self.seccion))
 
-        if fila != 0:
-            if self.base[fila-1][columna] == 0:
-                self.base[fila-1][columna] = '0'
-                self.casilla_cero(fila-1, columna)
-            elif self.base[fila-1][columna] != '0':
-                imagen_NConf = pygame.image.load(self.numeros[
-                                                self.base[fila-1][columna]
+
+        lista = [[fila-1,columna-1],
+                 [fila-1,columna],
+                 [fila-1,columna+1],
+                 [fila,columna-1],
+                 [fila,columna+1],
+                 [fila+1,columna-1],
+                 [fila+1,columna],
+                 [fila+1,columna+1]
+        ]
+        
+        for fila_i, columna_j in lista:
+            if (fila_i >= 0 and columna_j >= 0 and fila_i <= (self.ancho-1) and columna_j <= (self.largo-1)):
+
+                if self.base[fila_i][columna_j] == 0:
+                    self.base[fila_i][columna_j] = '0'
+                    self.casilla_cero(fila_i, columna_j)
+                elif self.base[fila_i][columna_j] != '0':
+                    imagen_NConf = pygame.image.load(self.numeros[
+                                                self.base[fila_i][columna_j]
                                                 ])
-                imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                self.screen.blit(imagen, (self.seccion*1+(fila-1)*self.seccion, self.seccion*4+columna*self.seccion))
-
-        if columna != 0:
-            if self.base[fila][columna-1] == 0:
-                self.base[fila][columna-1] = '0'
-                self.casilla_cero(fila, columna-1)
-                
-            elif self.base[fila][columna-1] != '0':
-                imagen_NConf = pygame.image.load(self.numeros[
-                                                self.base[fila][columna-1]
-                                                ])
-                imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+(columna-1)*self.seccion))
-
-        if columna != (self.largo-1):
-            if self.base[fila][columna+1] == 0:
-                self.base[fila][columna+1] = '0'
-                self.casilla_cero(fila, columna+1)
-                
-            elif self.base[fila][columna+1] != '0':
-                imagen_NConf = pygame.image.load(self.numeros[
-                                                self.base[fila][columna+1]
-                                                ])
-                imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+(columna+1)*self.seccion))
-
-
-        if fila != (self.ancho-1):
-            if self.base[fila+1][columna] == 0:
-                self.base[fila+1][columna] = '0'
-                self.casilla_cero(fila+1, columna)
-                
-            elif self.base[fila+1][columna] != '0':
-                imagen_NConf = pygame.image.load(self.numeros[
-                                                self.base[fila+1][columna]
-                                                ])
-                imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                self.screen.blit(imagen, (self.seccion*1+(fila+1)*self.seccion, self.seccion*4+columna*self.seccion))
-                
-        #########   
-                
-        if fila != 0 and columna != 0:
-            if self.base[fila-1][columna-1] == 0:
-                self.base[fila-1][columna-1] = '0'
-                self.casilla_cero(fila-1, columna-1)
-                
-            elif self.base[fila-1][columna-1] != '0':
-                imagen_NConf = pygame.image.load(self.numeros[
-                                                self.base[fila-1][columna-1]
-                                                ])
-                imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                self.screen.blit(imagen, (self.seccion*1+(fila-1)*self.seccion, self.seccion*4+(columna-1)*self.seccion))
-
-        if fila != 0 and columna != (self.largo-1):
-            if self.base[fila-1][columna+1] == 0:
-                self.base[fila-1][columna+1] = '0'
-                self.casilla_cero(fila-1, columna+1)
-                
-            elif self.base[fila-1][columna+1] != '0':
-                imagen_NConf = pygame.image.load(self.numeros[
-                                                self.base[fila-1][columna+1]
-                                                ])
-                imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                self.screen.blit(imagen, (self.seccion*1+(fila-1)*self.seccion, self.seccion*4+(columna+1)*self.seccion))
-
-
-        if fila != (self.ancho-1) and columna != 0:
-            if self.base[fila+1][columna-1] == 0:
-                self.base[fila+1][columna-1] = '0'
-                self.casilla_cero(fila+1, columna-1)
-                
-            elif self.base[fila+1][columna-1] != '0':
-                imagen_NConf = pygame.image.load(self.numeros[
-                                                self.base[fila+1][columna-1]
-                                                ])
-                imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                self.screen.blit(imagen, (self.seccion*1+(fila+1)*self.seccion, self.seccion*4+(columna-1)*self.seccion))
-
-
-
-        if fila != (self.ancho-1) and columna != (self.largo-1):
-            if self.base[fila+1][columna+1] == 0:
-                self.base[fila+1][columna+1] = '0'
-                self.casilla_cero(fila+1, columna+1)
-                
-            elif self.base[fila+1][columna+1] != '0':
-                imagen_NConf = pygame.image.load(self.numeros[
-                                                self.base[fila+1][columna+1]
-                                                ])
-                imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                self.screen.blit(imagen, (self.seccion*1+(fila+1)*self.seccion, self.seccion*4+(columna+1)*self.seccion))
-
+                    imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
+                    self.screen.blit(imagen, (self.seccion*1+fila_i*self.seccion, self.seccion*4+columna_j*self.seccion))
                 
         return 0
+        
 
 
 class Minesweeper():
@@ -319,7 +228,7 @@ class Minesweeper():
         param int self.largo: Largo de la pantalla
             Facil = 850 Medio = 1250 Dificil = 1600
         '''
-        self.dificultad = 'Dificil'
+        self.dificultad = 'Facil'
         
         # Inicializacion de la pantalla
         self.config_pantalla()
@@ -332,13 +241,12 @@ class Minesweeper():
         
         self.pantalla = Pantalla_jugando(self.dificultad)
         self.seccion = self.pantalla.seccion
-        
         ancho = self.pantalla.ancho_pantalla
         largo = self.pantalla.largo_pantalla
-   
+        
         # Definicion de la pantalla
         self.screen = pygame.display.set_mode((ancho, largo))
-
+        
         # # Color de fondo
         color = (205, 205, 205)  # Gris claro
         self.screen.fill(color)
@@ -347,7 +255,13 @@ class Minesweeper():
         # Caption de la pantalla
         pygame.display.set_caption('Minesweeper')
         
+        #partida = cargar_partida()
+        #print(list(partida))
+        
         self.pantalla.matriz_base(self.screen)
+        
+        pygame.display.update()
+        
 
     def eventos_teclado(self):
         '''
@@ -355,11 +269,20 @@ class Minesweeper():
         teclado y mouse
         '''
         running = True
+
         while running:
+
+            
             for evento in pygame.event.get():
                 running = self.logica_eventos(evento)
                 if running == False: # Se aniade esta condicion debido al for
                     break
+            
+                    
+        #         if guardar:
+        #guardar_partida(self.pantalla.base)
+        #print(self.pantalla.base)
+                    
 
     def logica_eventos(self, evento):
         '''
@@ -371,8 +294,7 @@ class Minesweeper():
             return False
 
         posicion_mouse = pygame.mouse.get_pos()
-        # print(posicion_mouse[0])
-        
+
         fila_casilla = posicion_mouse[0] // self.seccion - 1
         columna_casilla = posicion_mouse[1] // self.seccion - 4
         
@@ -391,6 +313,19 @@ class Minesweeper():
                 self.pantalla.click_derecho(fila_casilla, columna_casilla)
             
         return True
+
+
+def guardar_partida(partida):
+    guardar_datos = open('partida_guardada.txt', 'w')
+    guardar_datos.write(str(partida))   
+    guardar_datos.close()
+    return 0
+    
+def cargar_partida():
+    cargar_datos = open('cargar_partida.txt', 'r')
+    partida = cargar_datos.read().splitlines()
+    
+    return partida
 
 
 def main():
