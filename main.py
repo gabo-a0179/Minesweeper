@@ -335,8 +335,8 @@ class Minesweeper():
         pygame.display.set_caption('Minesweeper')
 
         # Configuranción de los mensajes
-        fuente = pygame.font.Font('freesansbold.ttf', 16)
-        boton_salida = fuente.render('ESC: Para volver al menú', True, "BLACK")
+        self.fuente = pygame.font.Font('freesansbold.ttf', 16)
+        boton_salida = self.fuente.render('ESC: Para salir y guardar partida', True, "BLACK")
         self.screen.blit(boton_salida, (10, 50))
         
         self.pantalla.matriz_base(self.screen)
@@ -350,9 +350,19 @@ class Minesweeper():
         teclado y mouse
         '''
         running = True
+        fps = 60
+        timer = pygame.time.Clock()
+        t_inicial = pygame.time.get_ticks()
+        rectangle = pygame.Rect(0, 0, 200, 50)
+        color=(205,205,205)
 
         while running:
-
+            self.color_tiempo(rectangle, color)
+            contador = ((pygame.time.get_ticks() - t_inicial)%60000)/1000
+            tiempo = self.fuente.render("Tiempo: {}".format(str(contador)), True, "BLACK")
+            self.screen.blit(tiempo, (10, 20))
+            pygame.display.update()
+            timer.tick(fps)
             
             for evento in pygame.event.get():
                 running = self.logica_eventos(evento)
@@ -364,6 +374,9 @@ class Minesweeper():
                     if evento.key == pygame.K_ESCAPE: # Con esta condición se logra que se cierre el juego presionando ESCAPE
                         guardar_partida(self.dificultad, self.pantalla.base, self.pantalla.estado_Flag, self.pantalla.partida_a_guardar)
                         running = False
+
+    def color_tiempo(self, rectangle, color):
+        self.screen.fill(color,rectangle)
 
 
     def logica_eventos(self, evento):
