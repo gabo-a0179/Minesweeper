@@ -8,7 +8,7 @@
 
 
 
-El presente proyecto se basa en el buscaminas tradicional, el cual además de la funcionalidad básica muestra:
+El presente proyecto se basa en el buscaminas tradicional, el cual además de la funcionalidad básica puede:
 
 
 - Mostrar tiempo
