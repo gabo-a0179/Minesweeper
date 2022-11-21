@@ -28,6 +28,7 @@ class Pantalla_jugando():
         '''
         self.difcultad = dificultad
         self.partida_a_guardar = []
+        self.gane_o_perdida = ''
         
         self.numeros = [
                     'Imagenes/empty.png',
@@ -74,9 +75,10 @@ class Pantalla_jugando():
         partida = cargar_partida()
         # Lee el archivo
         self.dificultad = partida[0]
-        self.base = ast.literal_eval(partida[1])
-        self.estado_Flag = ast.literal_eval(partida[2])
-        self.partida_cargada = ast.literal_eval(partida[3])
+        self.tiempo = partida[1]
+        self.base = ast.literal_eval(partida[2])
+        self.estado_Flag = ast.literal_eval(partida[3])
+        self.partida_cargada = ast.literal_eval(partida[4])
 
 
         
@@ -102,15 +104,18 @@ class Pantalla_jugando():
         for i in range(0, self.ancho):
             self.partida_a_guardar.append([])
             for j in range(0, self.largo):
-                self.partida_a_guardar[i].append([])
+
                 if self.base[i][j] == '0':
                     self.base[i][j] = 0
                 imagen = self.partida_cargada[i][j]
+                self.partida_a_guardar[i].append(self.partida_cargada[i][j])
 
                 if imagen == 'Grid':
                     img = 'Imagenes/Grid.png'
+
                 elif imagen == 'Flag':
                     img = 'Imagenes/flag.png'
+
                 else:
                     img = self.numeros[imagen]
                 NConf = pygame.image.load(img)
@@ -196,7 +201,7 @@ class Pantalla_jugando():
         Funcion que toma accion cuando se preciona el click izquierdo
         '''
 
-        if self.estado_Flag[fila][columna] == 'Flag':
+        if self.estado_Flag[fila][columna] == 'Flag' or self.estado_Flag[fila][columna] == 'Sin casilla':
             return True
         
         cantidad_minas = self.base[fila][columna]
@@ -218,6 +223,16 @@ class Pantalla_jugando():
 
         # Se actualiza la pantalla con los cambios
         pygame.display.update()
+        
+        casillas_sin_mina = 0
+        
+        for i in range(0, self.ancho):
+            for j in range(0, self.largo):
+                if self.estado_Flag[i][j] == 'Sin casilla':
+                    casillas_sin_mina += 1
+        if casillas_sin_mina == 62: #(self.ancho*self.largo - self.cantidad_minas):
+            self.gane_o_perdida = 'Gane'
+            return False    
         
         return True
             
@@ -248,7 +263,7 @@ class Pantalla_jugando():
         imagen_NConf = pygame.image.load('Imagenes/mineClicked.png')
         imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
         self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+columna*self.seccion))
-        
+        self.gane_o_perdida = 'Perdida'
         
     def casilla_cero(self, fila, columna):
 
@@ -257,7 +272,6 @@ class Pantalla_jugando():
         self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+columna*self.seccion))
         
         self.partida_a_guardar[fila][columna] = 0 
-
         self.estado_Flag[fila][columna] = 'Sin casilla'
         
         lista = [[fila-1,columna-1],
@@ -272,7 +286,7 @@ class Pantalla_jugando():
         
         for fila_i, columna_j in lista:
             if (fila_i >= 0 and columna_j >= 0 and fila_i <= (self.ancho-1) and columna_j <= (self.largo-1)):
-
+                self.estado_Flag[fila_i][columna_j] = 'Sin casilla'
                 if self.base[fila_i][columna_j] == 0:
                     self.base[fila_i][columna_j] = '0'
                     self.casilla_cero(fila_i, columna_j)
@@ -301,6 +315,8 @@ class Minesweeper():
         param int self.largo: Largo de la pantalla
             Facil = 850 Medio = 1250 Dificil = 1600
         '''
+        self.fuente = pygame.font.Font('freesansbold.ttf', 16)
+        self.tiempo = 0
         self.dificultad = dificultad
         if continuar_partida:
             self.config_pantalla_guardada()
@@ -312,6 +328,8 @@ class Minesweeper():
         #####################################################
         self.pantalla = Pantalla_jugando(self.dificultad, True)
         self.seccion = self.pantalla.seccion
+        self.screen = self.pantalla.screen
+        self.tiempo = self.pantalla.tiempo
         
     def config_pantalla(self):
         '''
@@ -335,7 +353,6 @@ class Minesweeper():
         pygame.display.set_caption('Minesweeper')
 
         # Configuranción de los mensajes
-        self.fuente = pygame.font.Font('freesansbold.ttf', 16)
         boton_salida = self.fuente.render('ESC: Para salir y guardar partida', True, "BLACK")
         self.screen.blit(boton_salida, (10, 50))
         
@@ -357,8 +374,10 @@ class Minesweeper():
         color=(205,205,205)
 
         while running:
-            self.color_tiempo(rectangle, color)
+            self.screen.fill(color, rectangle)
             contador = ((pygame.time.get_ticks() - t_inicial)%60000)/1000
+            contador = round(float(self.tiempo) + contador, 3)
+            print(contador)
             tiempo = self.fuente.render("Tiempo: {}".format(str(contador)), True, "BLACK")
             self.screen.blit(tiempo, (10, 20))
             pygame.display.update()
@@ -372,11 +391,13 @@ class Minesweeper():
                     
                 elif evento.type == pygame.KEYDOWN:
                     if evento.key == pygame.K_ESCAPE: # Con esta condición se logra que se cierre el juego presionando ESCAPE
-                        guardar_partida(self.dificultad, self.pantalla.base, self.pantalla.estado_Flag, self.pantalla.partida_a_guardar)
+                        guardar_partida(self.dificultad, contador, self.pantalla.base, self.pantalla.estado_Flag, self.pantalla.partida_a_guardar)
                         running = False
-
-    def color_tiempo(self, rectangle, color):
-        self.screen.fill(color,rectangle)
+                        
+        
+        condicion_final = self.pantalla.gane_o_perdida
+            
+        print(condicion_final)
 
 
     def logica_eventos(self, evento):
@@ -451,10 +472,12 @@ class GUI:
             self.dificultad = id
 
 
-def guardar_partida(dificultad, base, banderas, estado):
+def guardar_partida(dificultad, tiempo, base, banderas, estado):
     guardar_datos = open('partida_guardada.txt', 'w')
     guardar_datos.write(str(dificultad))
-    guardar_datos.write('\n')  
+    guardar_datos.write('\n')
+    guardar_datos.write(str(tiempo))
+    guardar_datos.write('\n')
     guardar_datos.write(str(base))  
     guardar_datos.write('\n') 
     guardar_datos.write(str(banderas))  
@@ -475,8 +498,6 @@ def main():
     gtk_object.start()
     pygame.init()
     Minesweeper(gtk_object.dificultad, gtk_object.continuar_partida)
-    
-    #cargar_partida()
 
 
 if __name__ == '__main__':
