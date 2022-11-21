@@ -348,8 +348,8 @@ class Minesweeper():
         pygame.display.set_caption('Minesweeper')
 
         # Configuranción de los mensajes
-        fuente = pygame.font.Font('freesansbold.ttf', 16)
-        boton_salida = fuente.render('ESC: Para volver al menú', True, "BLACK")
+        self.fuente = pygame.font.Font('freesansbold.ttf', 16)
+        boton_salida = self.fuente.render('ESC: Para volver al menú', True, "BLACK")
         self.screen.blit(boton_salida, (10, 50))
         
         self.pantalla.matriz_base(self.screen)
@@ -359,8 +359,22 @@ class Minesweeper():
         Funcion encargada de tomar accion ante eventos en el
         teclado y mouse
         '''
+        # Configuracion del timer
+        running = True
+        fps = 60
+        timer = pygame.time.Clock()
+        t_inicial = pygame.time.get_ticks()
+        rectangle = pygame.Rect(0, 0, 200, 50)
+        color=(205,205,205)
         running = True
         while running:
+            # Se crea un rectángulo que se llene cada vez tick del reloj
+            self.screen.fill(color,rectangle)
+            contador = ((pygame.time.get_ticks() - t_inicial)%60000)/1000
+            tiempo = self.fuente.render("Tiempo: {}".format(str(contador)), True, "BLACK")
+            self.screen.blit(tiempo, (10, 20))
+            pygame.display.update()
+            timer.tick(fps)
             for evento in pygame.event.get():
                 running = self.logica_eventos(evento)
                 if running == False: # Se aniade esta condicion debido al for
