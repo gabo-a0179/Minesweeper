@@ -398,6 +398,12 @@ class Minesweeper():
 
         running2 = True
         condicion_final = self.pantalla.gane_o_perdida
+            
+        print(condicion_final)
+        if condicion_final == 'Gane':
+            archivo, records_lista = guardar_records()
+            archivo.write(str(contador)+'\n') # Se guarda el record actual
+            
         while running2:
             for evento in pygame.event.get():
                 running2 = self.logica_eventos(evento)
@@ -418,8 +424,6 @@ class Minesweeper():
                     #pygame.mixer.Sound.play(sonido_gane)
                     pygame.display.update()
                     #running2 = False
-
-                        
 
 
     def logica_eventos(self, evento):
@@ -495,7 +499,7 @@ class GUI:
             self.screen.blit(gana, (100, 100))
             pygame.display.update()
             print("Ver Records")
-
+            archivo, lista_records_ordenados = guardar_records()
         else:
             self.dificultad = id
 
@@ -519,6 +523,19 @@ def cargar_partida():
     partida = cargar_datos.read().splitlines()
     
     return partida
+    
+    
+def guardar_records():
+    try:
+        cargar_datos = open('records.txt', 'r+')
+    
+    except FileNotFoundError:
+        return 0, 0
+    datos = cargar_datos.read().splitlines()
+    records = [float(record) for record in datos]
+    records_ord = sorted(records)
+
+    return cargar_datos, records_ord
 
 def main():
 
