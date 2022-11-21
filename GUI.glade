@@ -99,7 +99,7 @@
             <property name="orientation">vertical</property>
             <property name="layout_style">start</property>
             <child>
-              <object class="GtkButton" id="facil">
+              <object class="GtkButton" id="Facil">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -113,7 +113,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="medio">
+              <object class="GtkButton" id="Medio">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -127,7 +127,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="dificil">
+              <object class="GtkButton" id="Dificil">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
