@@ -223,9 +223,9 @@ class Pantalla_jugando():
 
         # Se actualiza la pantalla con los cambios
         pygame.display.update()
-        
+
         casillas_sin_mina = 0
-        
+
         for i in range(0, self.ancho):
             for j in range(0, self.largo):
                 if self.estado_Flag[i][j] == 'Sin casilla':
@@ -233,9 +233,9 @@ class Pantalla_jugando():
         if casillas_sin_mina == 62: #(self.ancho*self.largo - self.cantidad_minas):
             self.gane_o_perdida = 'Gane'
             return False    
-        
+
         return True
-            
+
     def click_derecho(self, fila, columna):
         '''
         Funcion que toma accion cuando se preciona el click derecho
@@ -250,12 +250,12 @@ class Pantalla_jugando():
             imagen_NConf = pygame.image.load('Imagenes/flag.png')
             self.estado_Flag[fila][columna] = 'Flag'
             self.partida_a_guardar[fila][columna] = 'Flag'
-            
+
         imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
         self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+columna*self.seccion))
         pygame.display.update()
-        
-    
+
+
     def mina_precionada(self, fila, columna):
         '''
         Funcion que toma accion cuando se preciona una mina
@@ -264,26 +264,26 @@ class Pantalla_jugando():
         imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
         self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+columna*self.seccion))
         self.gane_o_perdida = 'Perdida'
-        
+
     def casilla_cero(self, fila, columna):
 
         imagen_NConf = pygame.image.load(self.numeros[0])
         imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
         self.screen.blit(imagen, (self.seccion*1+fila*self.seccion, self.seccion*4+columna*self.seccion))
-        
+
         self.partida_a_guardar[fila][columna] = 0 
         self.estado_Flag[fila][columna] = 'Sin casilla'
-        
-        lista = [[fila-1,columna-1],
-                 [fila-1,columna],
-                 [fila-1,columna+1],
-                 [fila,columna-1],
-                 [fila,columna+1],
-                 [fila+1,columna-1],
-                 [fila+1,columna],
-                 [fila+1,columna+1]
-        ]
-        
+
+        lista = [[fila-1, columna-1],
+                 [fila-1, columna],
+                 [fila-1, columna+1],
+                 [fila, columna-1],
+                 [fila, columna+1],
+                 [fila+1, columna-1],
+                 [fila+1, columna],
+                 [fila+1, columna+1]
+                ]
+
         for fila_i, columna_j in lista:
             if (fila_i >= 0 and columna_j >= 0 and fila_i <= (self.ancho-1) and columna_j <= (self.largo-1)):
                 self.estado_Flag[fila_i][columna_j] = 'Sin casilla'
@@ -294,19 +294,21 @@ class Pantalla_jugando():
                     imagen_NConf = pygame.image.load(self.numeros[
                                                 self.base[fila_i][columna_j]
                                                 ])
-                    imagen = pygame.transform.scale(imagen_NConf, self.tamanio_casilla)
-                    self.screen.blit(imagen, (self.seccion*1+fila_i*self.seccion, self.seccion*4+columna_j*self.seccion))
+                    imagen = pygame.transform.scale(imagen_NConf,
+                                                    self.tamanio_casilla)
+                    self.screen.blit(imagen,
+                                     (self.seccion*1+fila_i*self.seccion,
+                                      self.seccion*4+columna_j*self.seccion))
                     self.partida_a_guardar[fila_i][columna_j] = self.base[fila_i][columna_j]
-                
+
         return 0
-        
 
 
 class Minesweeper():
     '''
     Clase que define el juego de buscaminas
     '''
-    def __init__(self, dificultad, continuar_partida = False):
+    def __init__(self, dificultad, continuar_partida=False):
         '''
         Constructor
 
@@ -330,20 +332,20 @@ class Minesweeper():
         self.seccion = self.pantalla.seccion
         self.screen = self.pantalla.screen
         self.tiempo = self.pantalla.tiempo
-        
+
     def config_pantalla(self):
         '''
         Funcion encargada de configurar la pantalla de juego
         '''
-        
+
         self.pantalla = Pantalla_jugando(self.dificultad)
         self.seccion = self.pantalla.seccion
         ancho = self.pantalla.ancho_pantalla
         largo = self.pantalla.largo_pantalla
-        
+
         # Definicion de la pantalla
         self.screen = pygame.display.set_mode((ancho, largo))
-        
+
         # # Color de fondo
         color = (205, 205, 205)  # Gris claro
         self.screen.fill(color)
@@ -353,13 +355,13 @@ class Minesweeper():
         pygame.display.set_caption('Minesweeper')
 
         # Configuranción de los mensajes
-        boton_salida = self.fuente.render('ESC: Para salir y guardar partida', True, "BLACK")
+        boton_salida = self.fuente.render('ESC: Para salir y guardar partida',
+                                          True, "BLACK")
         self.screen.blit(boton_salida, (10, 50))
-        
+
         self.pantalla.matriz_base(self.screen)
-        
+
         pygame.display.update()
-        
 
     def eventos(self):
         '''
@@ -371,29 +373,34 @@ class Minesweeper():
         timer = pygame.time.Clock()
         t_inicial = pygame.time.get_ticks()
         rectangle = pygame.Rect(0, 0, 200, 50)
-        color=(205,205,205)
+        color = (205, 205, 205)
         # Se obtienen archivos de sonido
-        #sonido_gane = pygame.mixer.Sound('fireworks.mp3') 
-        #sonido_per = pygame.mixer.Sound('blast.mp3')
+        #sonido_gane = pygame.mixer.Sound('fireworks.mp3') # noqa
+        #sonido_per = pygame.mixer.Sound('blast.mp3') # noqa
 
         while running:
             self.screen.fill(color, rectangle)
-            contador = ((pygame.time.get_ticks() - t_inicial)%60000)/1000
+            contador = ((pygame.time.get_ticks() - t_inicial) % 60000)/1000
             contador = round(float(self.tiempo) + contador, 3)
-            tiempo = self.fuente.render("Tiempo: {}".format(str(contador)), True, "BLACK")
+            tiempo = self.fuente.render("Tiempo: {}".format(str(contador)),
+                                        True, "BLACK")
             self.screen.blit(tiempo, (10, 20))
             pygame.display.update()
             timer.tick(fps)
-            
+
             for evento in pygame.event.get():
                 running = self.logica_eventos(evento)
-                if running == False: # Se aniade esta condicion debido al for
-                    break            
+                if running is False:  # Se aniade esta condicion debido al for
+                    break
 
-                    
                 elif evento.type == pygame.KEYDOWN:
-                    if evento.key == pygame.K_ESCAPE: # Con esta condición se logra que se cierre el juego presionando ESCAPE
-                        guardar_partida(self.dificultad, contador, self.pantalla.base, self.pantalla.estado_Flag, self.pantalla.partida_a_guardar)
+                    # Con esta condición se logra que
+                    # se cierre el juego presionando ESCAPE
+                    if evento.key == pygame.K_ESCAPE:
+                        guardar_partida(self.dificultad, contador,
+                                        self.pantalla.base,
+                                        self.pantalla.estado_Flag,
+                                        self.pantalla.partida_a_guardar)
                         running = False
 
         running2 = True
@@ -401,33 +408,27 @@ class Minesweeper():
         while running2:
             for evento in pygame.event.get():
                 running2 = self.logica_eventos(evento)
-                if running2 == False: # Se aniade esta condicion debido al for
+                if running2 is False:  # Se aniade esta condicion debido al for
                     break
                 elif condicion_final == "Gane":
                     self.fuente = pygame.font.Font('freesansbold.ttf', 50)
                     gana = self.fuente.render('Ha ganado', True, "BLACK")
                     self.screen.blit(gana, (65, 300))
-                    #pygame.mixer.Sound.play(sonido_gane)
+                    #pygame.mixer.Sound.play(sonido_gane) # noqa
                     pygame.display.update()
-                    #running2 = False
 
                 elif condicion_final == "Perdida":
                     self.fuente = pygame.font.Font('freesansbold.ttf', 50)
                     gana = self.fuente.render('Ha perdido', True, "BLACK")
                     self.screen.blit(gana, (65, 300))
-                    #pygame.mixer.Sound.play(sonido_gane)
+                    #pygame.mixer.Sound.play(sonido_gane) # noqa
                     pygame.display.update()
-                    #running2 = False
-
-                        
-
 
     def logica_eventos(self, evento):
         '''
         Logica utilizada en la funcion eventos
         '''
-        
-        
+
         if evento.type == pygame.QUIT:
             return False
 
@@ -435,23 +436,21 @@ class Minesweeper():
 
         fila_casilla = posicion_mouse[0] // self.seccion - 1
         columna_casilla = posicion_mouse[1] // self.seccion - 4
-        
-        
-        #if derecha:
+
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if (fila_casilla > (self.pantalla.ancho-1) or
                fila_casilla < 0 or
                columna_casilla > (self.pantalla.largo-1) or
                columna_casilla < 0):
-               pass # Se esta fuera de los posibles lugares de
+                pass
             elif evento.button == 1:
-                condicion = self.pantalla.click_izquierdo(fila_casilla, columna_casilla)
+                condicion = self.pantalla.click_izquierdo(fila_casilla,
+                                                          columna_casilla)
                 return condicion
             elif evento.button == 3:
                 self.pantalla.click_derecho(fila_casilla, columna_casilla)
-            
-        return True
 
+        return True
 
 
 class GUI:
@@ -467,7 +466,6 @@ class GUI:
         }
 
         self.builder.connect_signals(self.handlers)
-        
 
     def start(self):
         window = self.builder.get_object('main_window')
@@ -488,7 +486,7 @@ class GUI:
             Gtk.main_quit()
 
         elif id == "button_4":
-            f = open("records.txt","r") # aqui se pone archivo de records falta excepción
+            f = open("records.txt", "r") # aqui se pone archivo de records falta excepción # noqa
             lines = f.readlines()
             self.fuente = pygame.font.Font('freesansbold.ttf', 50)
             gana = self.fuente.render('{}'.format(lines[0]), True, "BLACK")
@@ -506,19 +504,21 @@ def guardar_partida(dificultad, tiempo, base, banderas, estado):
     guardar_datos.write('\n')
     guardar_datos.write(str(tiempo))
     guardar_datos.write('\n')
-    guardar_datos.write(str(base))  
-    guardar_datos.write('\n') 
-    guardar_datos.write(str(banderas))  
-    guardar_datos.write('\n') 
-    guardar_datos.write(str(estado))   
+    guardar_datos.write(str(base))
+    guardar_datos.write('\n')
+    guardar_datos.write(str(banderas))
+    guardar_datos.write('\n')
+    guardar_datos.write(str(estado))
     guardar_datos.close()
     return 0
-    
+
+
 def cargar_partida():
     cargar_datos = open('partida_guardada.txt', 'r')
     partida = cargar_datos.read().splitlines()
-    
+
     return partida
+
 
 def main():
 
