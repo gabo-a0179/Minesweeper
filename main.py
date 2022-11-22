@@ -230,7 +230,7 @@ class Pantalla_jugando():
             for j in range(0, self.largo):
                 if self.estado_Flag[i][j] == 'Sin casilla':
                     casillas_sin_mina += 1
-        if casillas_sin_mina == 62: #(self.ancho*self.largo - self.cantidad_minas):
+        if casillas_sin_mina == (self.ancho*self.largo - self.cantidad_minas):
             self.gane_o_perdida = 'Gane'
             return False    
         
